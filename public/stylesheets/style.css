@@ -9,12 +9,12 @@ a {
   color: #00B7FF;
 }
 
-
-  body {
+body {
             width: 1440px;
             margin: 15px auto 0;
             background: #fff;
         }
-        #RadViz{
-            float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
+        
+#RadViz{
+            float:left;position:absolute;left:40%; margin-top: 30px;  width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
         }
