@@ -34,6 +34,8 @@ app.use('/DimReduction', DimReduction);
 app.use('/tangent', tangent);
 app.use('/predictor', predictor);
 app.use('/raw', raw);
+
+// app.locals.resoucePath = "http://localhost:3000/sampleEjsPre/"; 
 // app.use('/users', users);
 
 // catch 404 and forward to error handler

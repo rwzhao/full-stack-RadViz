@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE html >
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-     <script type="text/javascript" src="/script/d3.v3.js"> </script>
-
+<meta http-equiv="content-type" content="text/html;charset=gbk">
+<meta name="author" content="oscar999">
+<head>
+    <script type="text/javascript" src="script/d3.v3.js"> </script>
     <style>
         body {
             width: 1440px;
@@ -15,19 +14,13 @@
             float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
         }
     </style>
-  </head>
-  <body>     
-    <% include nav %>
-    
-    <form>
-        用户名:<input type="text" id="txtUserName" name="txtUserName"/>
-        密码:<input type="password" id="txtUserPwd" name="txtUserPwd"/>
-        <input type="submit" value = "提交">
-    </form>
-    
-    <div id="RadViz"> </div>
-<script src="/kNN.js"></script>
-<script src="/dunnsIndex.js"></script>
+    <title>RadViz</title>
+</head>
+
+<body >
+<div id="RadViz"> </div>
+<script src="kNN.js"></script>
+<script src="drawArrow.js"></script>
 
 
 <script type="text/javascript">
@@ -58,7 +51,7 @@ for(var i=0; i<orderNum;i++){
     DimPoint[i][2]=ordertxt[i];            //DA的值
 }
 //compute Data Point
-d3.csv("/iris-normalization.csv",function(RecordData){
+d3.csv("newData1.csv",function(RecordData){
     for(var i=0;i<RecordData.length;i++){
         NodePoint[i]=new Array();
     }
@@ -69,10 +62,13 @@ d3.csv("/iris-normalization.csv",function(RecordData){
             t1[j]=parseFloat(t1[j]);
         }
         var t2=new Array(t1.length);
+
         for(var k=1;k<=ordertxt.length;k++)
         {
             t2[k-1]=t1[ordertxt[k-1]-1];
         }
+        t2[t1.length-1]=t1[t1.length-1];
+//        console.log("t2:"+t2);
 //        console.log(t2)
 //        console.log(t1+" ---")
         RecordData[i].dimData = t2;
@@ -88,24 +84,17 @@ d3.csv("/iris-normalization.csv",function(RecordData){
         NodePoint[i][1] = CoordY+centerY;
         NodePoint[i][2] = RecordData[i].classId;
         NodePoint[i][3] = RecordData[i].id;
+        NodePoint[i][4] = RecordData[i].dimData[ordertxt.length];
         dataStr = dataStr+NodePoint[i][3]+","+NodePoint[i][0]+","+NodePoint[i][1]+","+NodePoint[i][2]+"\n";
     }
 //                console.log(dataStr);
 //				console.log(dataStr);
-
-
-
-    var width = 600, height = 500;
-
-    var svg = d3.select(RadViz).append("svg").attr("width",width).attr("height", height) ;
-
+    var svg = d3.select(RadViz).append("svg").attr("width",600).attr("height", 500) ;
 
     var dimdata = [];
     for ( var i = 0; i < DimNum; i++) {
         dimdata[i] = 1;
     }
-
-
 //draw arc
     var pie = d3.layout.pie().sort(null);
     var arc = d3.svg.arc()
@@ -128,7 +117,10 @@ d3.csv("/iris-normalization.csv",function(RecordData){
                 return color1[i];
             })
             .attr("d", arc);
-//show Dimension Point				
+//show Dimension Point
+
+
+
     svg.selectAll("circle")
             .data(DimPoint)
             .enter()
@@ -140,6 +132,8 @@ d3.csv("/iris-normalization.csv",function(RecordData){
                 return d[1]+centerY;
             }).attr("r", 4)
             .attr("opacity",0.8);
+
+    drawArraw(svg,NodePoint);
 
     svg.selectAll("text")
             .data(DimPoint)
@@ -156,8 +150,6 @@ d3.csv("/iris-normalization.csv",function(RecordData){
             .attr("font-size", 15)
             .attr("stroke-width",2)
             .attr("fill", "black");
-
-
 //show data point
     var Nodes = svg.selectAll("RadViz")
             .data(NodePoint)
@@ -170,16 +162,7 @@ d3.csv("/iris-normalization.csv",function(RecordData){
             .attr("r", 4.5)
             .attr("class","nodes")
             .style("opacity",0.8)
-            .style("fill",function(d, i) {
-                var color;
-                if (d[2] == "1")
-                    color = "#ffc2ce";
-                else if (d[2] == "2")
-                    color = "#0ffa1d";
-                else if (d[2] == "3")
-                    color = "#fee905";
-                return color;
-            });
+            .style("fill",'red');
 
     Nodes.on("mouseenter",function(){d3.select(this).style('fill','red')
 
@@ -272,18 +255,14 @@ d3.csv("/iris-normalization.csv",function(RecordData){
         if (NodePoint[i][2] == predict) {
             right++;
         } else {
-            console.log("predict is " + predict + " NodePoint is " + NodePoint[i][2])
+//            console.log("predict is " + predict + " NodePoint is " + NodePoint[i][2])
         }
     }
-    console.log(right);
 
-    var dunnsindex = (dunnsIndex(3,NodePoint));
 
-    svg.append('text')
-            .text('Dunns Index: '+dunnsindex.toFixed(3))
-            .attr('x',width)
-            .attr('y',height)
-            .attr('dx',-250)
+
+//    console.log(right);
+
 
 
 
@@ -311,6 +290,5 @@ function getSumDown(RecordData,orderNum){
     return TempDown;
 }
 </script>
-    
-  </body>
+</body>
 </html>

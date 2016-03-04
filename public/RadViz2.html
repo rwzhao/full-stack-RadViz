@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="content-type" content="text/html;charset=gbk">
+<meta name="author" content="oscar999">
+<head>
+    <script type="text/javascript" src="script/d3.v3.js"> </script>
+
+    <style>
+        body {
+            width: 1440px;
+            margin: 15px auto 0;
+            background: #fff;
+        }
+        #RadViz{
+            float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
+        }
+    </style>
+    <title>RadViz</title>
+</head>
+
+<body>
+<div id="RadViz"> </div>
+<script src="kNN.js"></script>
+<script src="dunnsIndex.js"></script>
+<script src="permutation.js"></script>
+<script src="drawRadViz.js"></script>
+
+<script type="text/javascript">
+var DimNum = 4;                  //维度数
+var ordertxt = [1,2,3,4];        //order顺序
+var orderNum = ordertxt.length;  //order的个数
+var UnitRadius=360/orderNum;     //每个单元的角度
+
+var tmpArr = get_permutation(DimNum);
+
+var finalOrdertxt = new Array();
+
+tmpmax = -99999;
+
+var centerX=240.0;               //圆心
+var centerY=270.0;
+var r = 190;                     //半径
+var outerRadius = r+10;           //内半径
+var innerRadius = r-10;           //外半径
+
+var DimPoint = new Array();
+var Radius = new Array();
+
+var NodePoint =new Array();
+var FianlNodePoint = new Array();
+
+//compute DimPoint
+for(var i=0;i<orderNum;i++){
+    DimPoint[i]=new Array();
+}
+for(var i=0; i<orderNum;i++){
+    Radius[i] = (UnitRadius*i)*Math.PI/180;
+    DimPoint[i][0]=r*Math.cos(Radius[i]);  //DA的x坐标
+    DimPoint[i][1]=r*Math.sin(Radius[i]);  //DA的y坐标
+    DimPoint[i][2]=ordertxt[i];            //DA的值
+}
+//compute Data Point
+d3.csv("cardiac.csv",function(RecordData){
+    for(var i=0;i<RecordData.length;i++){
+        NodePoint[i]=new Array();
+    }
+
+    for(var i=0;i<RecordData.length;i++){
+        var tt=RecordData[i].dimData;
+        var t1=tt.split(",");
+        for(var j=0;j<t1.length;j++){
+            t1[j]=parseFloat(t1[j]);
+        }
+        RecordData[i].dimData = t1;
+    }
+
+   for(var ii = 0 ;ii<tmpArr.length;ii++) {
+       ordertxt = tmpArr[ii].slice();
+       var RecordData1 = RecordData.slice();
+
+       for (var i = 0; i < RecordData1.length; i++) {
+           var t1 = RecordData1[i].dimData;
+
+           var t2 = new Array(t1.length);
+           for (var k = 1; k <= ordertxt.length; k++) {
+               t2[k - 1] = t1[ordertxt[k - 1] - 1];
+           }
+//        console.log(t2)
+//        console.log(t1+" ---")
+           RecordData1[i].dimData = t2;
+       }
+       var dataStr = "";
+       for (var i = 0; i < RecordData1.length; i++) {
+           var SumDown = getSumDown(RecordData1[i].dimData, orderNum);
+           var SumUpX = getSumUpX(RecordData1[i].dimData, Radius, orderNum);
+           var SumUpY = getSumUpY(RecordData1[i].dimData, Radius, orderNum);
+           var CoordX = SumUpX / SumDown;
+           var CoordY = SumUpY / SumDown;
+           NodePoint[i][0] = CoordX + centerX;
+           NodePoint[i][1] = CoordY + centerY;
+           NodePoint[i][2] = RecordData1[i].classId;
+           NodePoint[i][3] = RecordData1[i].id;
+           dataStr = dataStr + NodePoint[i][3] + "," + NodePoint[i][0] + "," + NodePoint[i][1] + "," + NodePoint[i][2] + "\n";
+       }
+//                console.log(dataStr);
+//				console.log(dataStr);
+       var tmp = dunnsIndex(3,NodePoint);
+       if(tmp > tmpmax)
+       {
+           tmpmax=tmp;
+
+           finalOrdertxt=ordertxt.slice();
+           FianlNodePoint = clone(NodePoint);
+           console.log(finalOrdertxt+" tmp: "+tmpmax);
+           drawRadViz();
+       }
+       else
+       {
+           console.log(tmp+" "+ordertxt);
+
+       }
+
+   }
+
+
+
+
+
+});//.data
+
+
+function getSumUpX(RecordData,Radius,orderNum){
+    var TempUpX=0;
+    for(var i=0;i<orderNum;i++){
+        TempUpX=TempUpX+r*RecordData[i]*Math.cos(Radius[i]);
+    }
+    return TempUpX;
+}
+function getSumUpY(RecordData,Radius,orderNum){
+    var TempUpY=0;
+    for(var i=0;i<orderNum;i++){
+        TempUpY=TempUpY+r*RecordData[i]*Math.sin(Radius[i]);
+    }
+    return TempUpY;
+}
+function getSumDown(RecordData,orderNum){
+    var TempDown=0;
+    for(var i=0;i<orderNum;i++){
+        TempDown =TempDown+RecordData[i];
+    }
+    return TempDown;
+}
+</script>
+</body>
+</html>
