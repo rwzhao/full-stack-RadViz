@@ -3,6 +3,18 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+
+
 a {
   color: #00B7FF;
 }
+
+
+  body {
+            width: 1440px;
+            margin: 15px auto 0;
+            background: #fff;
+        }
+        #RadViz{
+            float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
+        }
