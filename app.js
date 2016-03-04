@@ -6,10 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 
-var subform = require('./routes/subform');
-var usesession = require('./routes/usesession');
-var usecookies = require('./routes/usecookies');
-var usecrypto = require('./routes/usecrypto');            
+var DimReduction = require('./routes/DimReduction');
+var tangent = require('./routes/tangent');
+var predictor = require('./routes/predictor');
+var raw = require('./routes/raw');            
 
 
 var routes = require('./routes/index');
@@ -30,10 +30,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/subform', subform);
-app.use('/usesession', usesession);
-app.use('/usecookies', usecookies);
-app.use('/usecrypto', usecrypto);
+app.use('/DimReduction', DimReduction);
+app.use('/tangent', tangent);
+app.use('/predictor', predictor);
+app.use('/raw', raw);
 // app.use('/users', users);
 
 // catch 404 and forward to error handler
