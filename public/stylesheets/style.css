@@ -18,3 +18,9 @@ body {
 #RadViz{
             float:left;position:absolute;left:40%; margin-top: 30px;  width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
         }
+        
+#dropzone { margin-bottom: 3rem;  margin-top: 10px; }
+
+.dropzone { border: 2px  #0087F7; margin-top: 10px; border-radius: 5px; background: white; border-style:dashed; }
+.dropzone .dz-message { font-weight: 400; }
+.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }

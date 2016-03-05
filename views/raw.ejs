@@ -5,9 +5,22 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
      <script type="text/javascript" src="/script/d3.v3.js"> </script>
      
+         <script src="/dropzone.js"></script>
+    <link rel='stylesheet' href='dropzone.css' />
+    
+     
   </head>
   <body>     
     <% include nav %>
+    
+   <div id="dropzone"><form method="post" action="/post-raw" class=" needsclick dropzone" id="demo-upload" enctype="multipart/form-data">
+
+  <div class="dz-message needsclick">
+   <h2> Drop CSV files here or click to upload.</h2>
+  </div>
+
+</form></div>
+
     
     
     <div id="RadViz"> </div>
