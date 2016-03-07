@@ -6,27 +6,20 @@
      <script type="text/javascript" src="/script/d3.v3.js"> </script>
      
          <script src="/dropzone.js"></script>
+          <script src="/jquery.js"></script>
     <link rel='stylesheet' href='dropzone.css' />
     
      
   </head>
   <body>     
+  
     <% include nav %>
-    
-   <div id="dropzone"><form method="post" action="/post-raw" class=" needsclick dropzone" id="demo-upload" enctype="multipart/form-data">
+      
 
-  <div class="dz-message needsclick">
-   <h2> Drop CSV files here or click to upload.</h2>
-  </div>
-
-</form></div>
-
-    
-    
-    <div id="RadViz"> </div>
+  
+<div id="RadViz"> </div>
 <script src="/kNN.js"></script>
 <script src="/dunnsIndex.js"></script>
-
 
 <script type="text/javascript">
 var DimNum = 4;                  //维度数
@@ -308,6 +301,7 @@ function getSumDown(RecordData,orderNum){
     }
     return TempDown;
 }
+
 </script>
     
   </body>

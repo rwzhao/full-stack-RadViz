@@ -6,12 +6,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 
-
 var formidable = require('formidable'),
     http = require('http'),
     util = require('util'),
 fs=require('fs');
 
+
+var data = require('./routes/data');
 var DimReduction = require('./routes/DimReduction');
 var tangent = require('./routes/tangent');
 var predictor = require('./routes/predictor');
@@ -76,7 +77,7 @@ app.post('/post-raw',function (req,res) {
 })
 
 app.use('/', routes);
-
+app.use('/data',data);
 app.use('/DimReduction', DimReduction);
 app.use('/tangent', tangent);
 app.use('/predictor', predictor);
