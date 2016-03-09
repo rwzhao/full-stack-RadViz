@@ -80,6 +80,57 @@ d3.csv("/newData1.csv",function(RecordData){
 //                console.log(dataStr);
 //				console.log(dataStr);
     var svg = d3.select(RadViz).append("svg").attr("width",600).attr("height", 500) ;
+    
+    
+        var xScale = d3.scale.linear().domain([10,510])
+            .range([10,510]);
+
+    var yScale = d3.scale.linear().domain([10,510])
+            .range([20,510-20]);
+
+    var brush = d3.svg.brush()
+            .x(xScale)
+            .y(yScale)
+            .extent([0,0],[0,0])
+            .on('brush',brushed);
+
+    function brushed(){
+
+        var extent = brush.extent();
+        var xmin = extent[0][0];
+        var xmax = extent[1][0];
+        var ymin = extent[0][1];
+        var ymax = extent[1][1];
+//        console.log(xmax + " " + xmin);
+//        console.log(ymax + " " + ymin);
+
+     Nodes.style("fill",function(d, i) {
+
+
+            var color;
+
+         if(d[0]>=xmin && d[0]<=xmax && d[1]>=ymin && d[1]<=ymax){
+             return 'red';
+         }else{
+            if (d[2] == "1")
+                color = "#ffc2ce";
+            else if (d[2] == "2")
+                color = "#0ffa1d";
+            else if (d[2] == "3")
+                color = "#fee905";
+            return color;
+        }
+     });
+
+
+
+    }
+
+
+    svg.append('g').call(brush)
+            .selectAll('rect')
+            .style('fill-opacity',0.3);
+    
 
     var dimdata = [];
     for ( var i = 0; i < DimNum; i++) {
