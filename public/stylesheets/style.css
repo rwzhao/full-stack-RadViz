@@ -15,9 +15,6 @@ body {
             background: #fff;
         }
         
-#RadViz{
-            float:left;position:absolute;left:40%; margin-top: 30px;  width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
-        }
         
 #dropzone { margin-bottom: 3rem;  margin-top: 10px; }
 

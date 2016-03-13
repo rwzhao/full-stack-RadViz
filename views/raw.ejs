@@ -21,6 +21,60 @@
 <script src="/kNN.js"></script>
 <script src="/dunnsIndex.js"></script>
 
+<style>
+     body {
+            width: 1440px;
+            margin: 15px auto 0;
+            background: #fff;
+        }
+        #RadViz{
+            float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
+        }
+    
+    svg {
+        font: 10px sans-serif;
+        padding: 10px;
+    }
+
+    .axis,
+    .frame {
+        shape-rendering: crispEdges;
+    }
+
+    .axis line {
+        stroke: #ddd;
+    }
+
+    .axis path {
+        display: none;
+    }
+
+    .cell text {
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+
+    .frame {
+        fill: none;
+        stroke: #aaa;
+    }
+
+    circle {
+        fill-opacity: .7;
+    }
+
+    circle.hidden {
+        fill: #ccc !important;
+    }
+
+    .extent {
+        fill: #000;
+        fill-opacity: .125;
+        stroke: #fff;
+    }
+</style>
+
+
 <script type="text/javascript">
 var DimNum = 4;                  //维度数
 var ordertxt = [1,2,3,4];        //order顺序
@@ -49,7 +103,7 @@ for(var i=0; i<orderNum;i++){
     DimPoint[i][2]=ordertxt[i];            //DA的值
 }
 //compute Data Point
-d3.csv("/iris-normalization.csv",function(RecordData){
+d3.csv("iris-normalization.csv",function(RecordData){
     for(var i=0;i<RecordData.length;i++){
         NodePoint[i]=new Array();
     }
@@ -90,8 +144,7 @@ d3.csv("/iris-normalization.csv",function(RecordData){
 
     var svg = d3.select(RadViz).append("svg").attr("width",width).attr("height", height) ;
 
-
-      var xScale = d3.scale.linear().domain([10,510])
+    var xScale = d3.scale.linear().domain([10,510])
             .range([10,510]);
 
     var yScale = d3.scale.linear().domain([10,510])
@@ -101,7 +154,23 @@ d3.csv("/iris-normalization.csv",function(RecordData){
             .x(xScale)
             .y(yScale)
             .extent([0,0],[0,0])
-            .on('brush',brushed);
+            .on('brush',brushed)
+            .on('brushstart',brushstart)
+            .on('brushend',brushend);
+
+    function brushstart(){
+                 d3.select('body').selectAll('.cell').selectAll('circle')
+//                 .style('fill','#ccc');
+                .classed('hidden',true);
+
+    }
+
+    function brushend(){
+        d3.select('body').selectAll('.cell').selectAll('circle')
+                .classed('hidden',function(){
+                    setTimeout(5000,function(){return false;});
+                   });
+    }
 
     function brushed(){
 
@@ -113,14 +182,30 @@ d3.csv("/iris-normalization.csv",function(RecordData){
 //        console.log(xmax + " " + xmin);
 //        console.log(ymax + " " + ymin);
 
+
+
      Nodes.style("fill",function(d, i) {
 
 
             var color;
+//         console.log(d);
+
+//         d3.select('body').selectAll('.cell').selectAll('circle')
+//                 .style('fill','#ccc');
 
          if(d[0]>=xmin && d[0]<=xmax && d[1]>=ymin && d[1]<=ymax){
+
+             d3.select('body').selectAll('.cell').selectAll('circle')
+                     .filter(function(dd){return dd.id==d[3];})
+                     .classed('hidden',false);
+
+
              return 'red';
+
          }else{
+
+//             return color(d[2]);
+
             if (d[2] == "1")
                 color = "#ffc2ce";
             else if (d[2] == "2")
@@ -130,6 +215,8 @@ d3.csv("/iris-normalization.csv",function(RecordData){
             return color;
         }
      });
+
+
 
 
 
@@ -354,15 +441,60 @@ function getSumDown(RecordData,orderNum){
     return TempDown;
 }
 
+
+
+
+
 </script>
-
-
 
 <style>
 
-   
+    svg {
+        font: 10px sans-serif;
+        padding: 10px;
+    }
+
+    .axis,
+    .frame {
+        shape-rendering: crispEdges;
+    }
+
+    .axis line {
+        stroke: #ddd;
+    }
+
+    .axis path {
+        display: none;
+    }
+
+    .cell text {
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+
+    .frame {
+        fill: none;
+        stroke: #aaa;
+    }
+
+    circle {
+        fill-opacity: .7;
+    }
+
+    circle.hidden {
+        fill: #ccc !important;
+    }
+
+    .extent {
+        fill: #000;
+        fill-opacity: .125;
+        stroke: #fff;
+    }
+
+</style>
 
 
+<script>
 
     var width = 960,
             size = 130,
@@ -390,7 +522,7 @@ function getSumDown(RecordData,orderNum){
         if (error) throw error;
 
         var domainByTrait = {},
-                traits = d3.keys(data[0]).filter(function(d) { return d !== "species"; }),
+                traits = d3.keys(data[0]).filter(function(d) { return d !== "species"&&d!="id"; }),
                 n = traits.length;
 
         traits.forEach(function(trait) {
@@ -464,7 +596,7 @@ function getSumDown(RecordData,orderNum){
                     .attr("r", 4)
                     .style("fill", function(d) {
                         return color(d.species);
-                       });
+                    });
         }
 
         var brushCell;
