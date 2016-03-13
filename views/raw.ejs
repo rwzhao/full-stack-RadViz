@@ -5,6 +5,27 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
      <script type="text/javascript" src="/script/d3.v3.js"> </script>
      
+      <style>
+        body {
+            width: 1440px;
+            margin: 15px auto 0;
+            background: #fff;
+        }
+        #RadViz{
+            float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
+        }
+        
+    circle {
+        fill-opacity: .7;
+    }
+
+    circle.hidden1 {
+        fill: #ccc;
+    }
+        
+    </style>
+
+     
          <script src="/dropzone.js"></script>
           <script src="/jquery.js"></script>
     <link rel='stylesheet' href='dropzone.css' />
@@ -21,58 +42,6 @@
 <script src="/kNN.js"></script>
 <script src="/dunnsIndex.js"></script>
 
-<style>
-     body {
-            width: 1440px;
-            margin: 15px auto 0;
-            background: #fff;
-        }
-        #RadViz{
-            float:left;margin-top:20px;margin-left:10px;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
-        }
-    
-    svg {
-        font: 10px sans-serif;
-        padding: 10px;
-    }
-
-    .axis,
-    .frame {
-        shape-rendering: crispEdges;
-    }
-
-    .axis line {
-        stroke: #ddd;
-    }
-
-    .axis path {
-        display: none;
-    }
-
-    .cell text {
-        font-weight: bold;
-        text-transform: capitalize;
-    }
-
-    .frame {
-        fill: none;
-        stroke: #aaa;
-    }
-
-    circle {
-        fill-opacity: .7;
-    }
-
-    circle.hidden {
-        fill: #ccc !important;
-    }
-
-    .extent {
-        fill: #000;
-        fill-opacity: .125;
-        stroke: #fff;
-    }
-</style>
 
 
 <script type="text/javascript">
@@ -150,7 +119,8 @@ d3.csv("iris-normalization.csv",function(RecordData){
     var yScale = d3.scale.linear().domain([10,510])
             .range([20,510-20]);
 
-    var brush = d3.svg.brush()
+
+     var brush = d3.svg.brush()
             .x(xScale)
             .y(yScale)
             .extent([0,0],[0,0])
@@ -161,17 +131,19 @@ d3.csv("iris-normalization.csv",function(RecordData){
     function brushstart(){
                  d3.select('body').selectAll('.cell').selectAll('circle')
 //                 .style('fill','#ccc');
-                .classed('hidden',true);
+                .classed('hidden1',true);
 
     }
 
     function brushend(){
-    if (brush.empty()){
-        d3.select('body').selectAll('.cell').selectAll('circle')
-                .classed('hidden',function(){
-                    setTimeout(5000,function(){return false;});
-                   });
-          }
+        if (brush.empty()) {
+            d3.select('body').selectAll('.cell').selectAll('circle')
+                    .classed('hidden1', function () {
+
+                        return false;
+
+                    });
+        }
     }
 
     function brushed(){
@@ -199,7 +171,7 @@ d3.csv("iris-normalization.csv",function(RecordData){
 
              d3.select('body').selectAll('.cell').selectAll('circle')
                      .filter(function(dd){return dd.id==d[3];})
-                     .classed('hidden',false);
+                     .classed('hidden1',false);
 
 
              return 'red';
@@ -223,13 +195,10 @@ d3.csv("iris-normalization.csv",function(RecordData){
 
 
     }
-
-
-    svg.append('g').call(brush)
+    
+        svg.append('g').call(brush)
             .selectAll('rect')
             .style('fill-opacity',0.3);
-
-
 
 
     var dimdata = [];
@@ -483,7 +452,7 @@ function getSumDown(RecordData,orderNum){
         fill-opacity: .7;
     }
 
-    circle.hidden {
+    circle.hidden1 {
         fill: #ccc !important;
     }
 
@@ -542,8 +511,8 @@ function getSumDown(RecordData,orderNum){
                 .on("brushend", brushend);
 
         var svg = d3.select("body").append("svg")
-                .attr("width", size * n + padding)
-                .attr("height", size * n + padding)
+                .attr("width", size * n + padding+100)
+                .attr("height", size * n + padding+100)
                 .append("g")
                 .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
 
@@ -603,7 +572,8 @@ function getSumDown(RecordData,orderNum){
 
         var brushCell;
 
-             function brushstart(p) {
+        // Clear the previously-active brush, if any.
+        function brushstart(p) {
             if (brushCell !== this) {
                 d3.select(brushCell).call(brush.clear());
                 x.domain(domainByTrait[p.x]);
@@ -611,14 +581,13 @@ function getSumDown(RecordData,orderNum){
                 brushCell = this;
             }
             d3.select('#RadViz').selectAll('.nodes')
-                    .classed('hidden',true);
-
+                    .classed('hidden1',true);
         }
 
         // Highlight the selected circles.
         function brushmove(p) {
             var e = brush.extent();
-            svg.selectAll("circle").classed("hidden", function(d) {
+            svg.selectAll("circle").classed("hidden1", function(d) {
 
 
                 if( e[0][0] > d[p.x] || d[p.x] > e[1][0]
@@ -631,7 +600,7 @@ function getSumDown(RecordData,orderNum){
 
                                 return d.id==dd[3];
                             })
-                            .classed('hidden',false);
+                            .classed('hidden1',false);
 
                     return false;
                 }
@@ -644,9 +613,9 @@ function getSumDown(RecordData,orderNum){
         function brushend() {
             if (brush.empty())
             {
-                svg.selectAll(".hidden").classed("hidden", false);
+                svg.selectAll(".hidden1").classed("hidden1", false);
                 d3.select('#RadViz').selectAll('.nodes')
-                        .classed('hidden',false);
+                        .classed('hidden1',false);
             }
         }
 

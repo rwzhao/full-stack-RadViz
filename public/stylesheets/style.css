@@ -1,3 +1,12 @@
+    circle {
+        fill-opacity: .7;
+    }
+
+    circle.hidden {
+        fill: #ccc !important;
+    }
+
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -50,13 +59,7 @@ body {
         stroke: #aaa;
     }
 
-    circle {
-        fill-opacity: .7;
-    }
 
-    circle.hidden {
-        fill: #ccc !important;
-    }
 
     .extent {
         fill: #000;
