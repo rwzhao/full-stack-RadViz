@@ -166,10 +166,12 @@ d3.csv("iris-normalization.csv",function(RecordData){
     }
 
     function brushend(){
+    if (brush.empty()){
         d3.select('body').selectAll('.cell').selectAll('circle')
                 .classed('hidden',function(){
                     setTimeout(5000,function(){return false;});
                    });
+          }
     }
 
     function brushed(){
