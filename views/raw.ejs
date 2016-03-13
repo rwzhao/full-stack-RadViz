@@ -603,28 +603,51 @@ function getSumDown(RecordData,orderNum){
 
         var brushCell;
 
-        // Clear the previously-active brush, if any.
-        function brushstart(p) {
+             function brushstart(p) {
             if (brushCell !== this) {
                 d3.select(brushCell).call(brush.clear());
                 x.domain(domainByTrait[p.x]);
                 y.domain(domainByTrait[p.y]);
                 brushCell = this;
             }
+            d3.select('#RadViz').selectAll('.nodes')
+                    .classed('hidden',true);
+
         }
 
         // Highlight the selected circles.
         function brushmove(p) {
             var e = brush.extent();
             svg.selectAll("circle").classed("hidden", function(d) {
-                return e[0][0] > d[p.x] || d[p.x] > e[1][0]
-                        || e[0][1] > d[p.y] || d[p.y] > e[1][1];
+
+
+                if( e[0][0] > d[p.x] || d[p.x] > e[1][0]
+                        || e[0][1] > d[p.y] || d[p.y] > e[1][1]){
+                    return true;
+                }else{
+//                    console.log(d);
+                    d3.select('#RadViz').selectAll('.nodes')
+                            .filter(function(dd){
+
+                                return d.id==dd[3];
+                            })
+                            .classed('hidden',false);
+
+                    return false;
+                }
             });
+
+
         }
 
         // If the brush is empty, select all circles.
         function brushend() {
-            if (brush.empty()) svg.selectAll(".hidden").classed("hidden", false);
+            if (brush.empty())
+            {
+                svg.selectAll(".hidden").classed("hidden", false);
+                d3.select('#RadViz').selectAll('.nodes')
+                        .classed('hidden',false);
+            }
         }
 
         d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
