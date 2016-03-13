@@ -20,6 +20,7 @@ router.get('/',function (req,res) {
     // console.log(userName);
     // console.log(userPwd);
     
+    
 });
 
 router.post('/upload',function (req,res) {
