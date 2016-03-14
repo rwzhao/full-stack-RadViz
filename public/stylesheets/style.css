@@ -1,10 +1,4 @@
-    circle {
-        fill-opacity: .7;
-    }
 
-    circle.hidden {
-        fill: #ccc !important;
-    }
 
 
 body {
@@ -65,4 +59,12 @@ body {
         fill: #000;
         fill-opacity: .125;
         stroke: #fff;
+    }
+    
+        circle {
+        fill-opacity: .7;
+    }
+
+    circle.hidden1 {
+        fill: #ccc !important;
     }
