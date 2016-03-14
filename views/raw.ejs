@@ -180,6 +180,10 @@ d3.csv("iris-normalization.csv",function(RecordData){
 
 //             return color(d[2]);
 
+            d3.select('body').selectAll('.cell').selectAll('circle')
+                     .filter(function(dd){return dd.id==d[3];})
+                     .classed('hidden1',true);
+
             if (d[2] == "1")
                 color = "#ffc2ce";
             else if (d[2] == "2")
@@ -592,6 +596,12 @@ function getSumDown(RecordData,orderNum){
 
                 if( e[0][0] > d[p.x] || d[p.x] > e[1][0]
                         || e[0][1] > d[p.y] || d[p.y] > e[1][1]){
+                        
+                         d3.select('#RadViz').selectAll('.nodes')
+                            .filter(function(dd){
+                                return d.id==dd[3]
+                            }).classed('hidden1',true);
+                        
                     return true;
                 }else{
 //                    console.log(d);
