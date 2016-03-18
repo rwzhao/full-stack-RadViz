@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="./d3.js"></script>
+    <script src="./angular.js"></script>
+    <script src="heatmap.js"></script>
+    <!--<script src="data.js"></script>-->
+    <title></title>
+    <style>
+        .xLabel, .yLabel, .legendLabel {
+            font-size: 9px;
+            font-family: Verdana;
+        }
+
+        .tooltip {
+            font-size: 9px;
+            font-family: Verdana;
+            background-color: #333333;
+            padding: 5px;
+            color: #ffffff;
+            border-radius: 3px;
+            opacity: 0.7;
+        }
+
+        .chart {
+            width: 50%;
+            height: 600px;
+            background-color: #ffffff;
+        }
+
+        .square {
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body ng-controller="democontroller">
+    <script>
+
+        var s =["a","b","c","d","e","f","g","h","i",'j','k','l'];
+        var data = [];
+        for(var i=0;i< s.length;i++)
+            for(var j=0;j< s.length;j++)
+            {
+                data.push({'y':s[j],'x':s[i],"value":Math.random()})
+            }
+
+    </script>
+
+    <heatmap class="chart" data="data" dispatch="dispatch" options="options"></heatmap>
+    <heatmap class="chart" data="data" dispatch="dispatch" options="options2"></heatmap>
+
+
+</body>
+
+<script>
+
+    var app = angular.module('app',['heatmap']);
+
+    var tooltip = d3.select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .text("a simple tooltip")
+            .classed("tooltip", true);
+
+    app.controller("democontroller", function($scope) {
+
+        $scope.data = data;
+
+        $scope.options = {
+            margin: { top: 150, right: 0, bottom: 100, left: 120 },
+            colors: ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]
+        };
+
+        $scope.options2 = {
+            margin: { top: 150, right: 0, bottom: 100, left: 120 },
+            colors: [
+                ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"],
+                ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#a63603", "#7f2704"]
+            ],
+            breaks: [4],
+            legend: false
+        };
+
+        $scope.$watch("dispatch", function() {
+            if ($scope.dispatch) {
+                $scope.dispatch.on("click", function(e) {
+                    console.log(e);
+                });
+                $scope.dispatch.on("mouseover", function(e) {
+                    return tooltip.text(e.y + ": " + e.x + " (" + e.value + ")").style("visibility", "visible");
+                })
+                $scope.dispatch.on("mousemove", function(e) {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                $scope.dispatch.on("mouseout", function(e) {
+                    return tooltip.style("visibility", "hidden");
+                });
+            }
+        }, true);
+
+    });
+
+
+</script>
+
+</html>
