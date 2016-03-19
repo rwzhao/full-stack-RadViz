@@ -173,9 +173,10 @@ angular.module("heatmap", []).directive("heatmap",
 
                 };
 
-                scope.$watch("data", function() {
+                scope.$watch("data", debounce(function() {
+                    console.log('false11')
                     render();
-                }, true);
+                },true),400);
 
                 d3.select(window).on("resize", debounce(function() {
                     render();
