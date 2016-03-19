@@ -38,13 +38,28 @@
 <body ng-controller="democontroller">
     <script>
 
-        var s =["a","b","c","d","e","f","g","h","i",'j','k','l'];
-        var data = [];
-        for(var i=0;i< s.length;i++)
-            for(var j=0;j< s.length;j++)
-            {
-                data.push({'y':s[j],'x':s[i],"value":Math.random()})
+     var data = [];
+        d3.csv("./flowers.csv",function(error,data1) {
+
+            var dimensions = [];
+
+            var n;
+            if (error) {
+                throw error;
+            } else {
+                dimensions = (d3.keys(data1[0]).filter(function (d) {
+                    return d !== "species" && d !== 'id';
+                }));
             }
+
+
+            n = dimensions.length;
+            console.log(n);
+            for (var i = 0; i < n; i++)
+                for (var j = 0; j < n; j++) {
+                    data.push({'y': dimensions[j], 'x': dimensions[i], "value": Math.random()})
+                }
+        });
 
     </script>
 
