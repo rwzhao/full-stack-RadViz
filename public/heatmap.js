@@ -16,7 +16,9 @@ angular.module("heatmap", []).directive("heatmap",
             scope: {
                 data: "=",
                 options: "=?",
-                dispatch: "=?"
+                dispatch: "=?",
+                dimensions: "=?"
+
             },
             transclude: false,
             template: "<div></div>",
@@ -35,6 +37,11 @@ angular.module("heatmap", []).directive("heatmap",
                 if (scope.options) {
                     options = angular.extend(options, scope.options);
                 }
+
+
+
+
+
 
                 scope.dispatch = d3.dispatch("click", "mouseover", "mouseout", "mousemove");
 
@@ -58,6 +65,9 @@ angular.module("heatmap", []).directive("heatmap",
                     var yu = {};
                     var y = [];
 
+
+
+
                     for (var i in scope.data) {
                         if (typeof(xu[scope.data[i].x]) == "undefined") {
                             x.push(scope.data[i].x);
@@ -73,8 +83,8 @@ angular.module("heatmap", []).directive("heatmap",
                         scope.data[d].xIndex = x.indexOf(scope.data[d].x);
                         scope.data[d].yIndex = y.indexOf(scope.data[d].y);
                     }
-                    
-                       var drag = d3.behavior.drag()
+
+                    var drag = d3.behavior.drag()
                         .on('drag',dragText)
                         .on('dragstart',dragStart)
                         .on('dragend',dragEnd);
@@ -84,7 +94,7 @@ angular.module("heatmap", []).directive("heatmap",
                     }
 
                     function dragText (d,i){
-                        console.log(i);
+//                        console.log(i);
                         var x=   d3.event.x;
                         var y=  d3.event.y-yGridSize*i;
 
@@ -97,8 +107,16 @@ angular.module("heatmap", []).directive("heatmap",
                     }
 
                     function dragEnd(){
-                            d3.select(this)
-                                .attr('fill','black')
+                        d3.select(this)
+                            .attr('fill','black');
+                        changeLabelOrder(data,0,1);
+
+//                        data.push( {y: "sepal1 length", x: "sepal1 length", value: 1, xIndex: 4, yIndex: 4});
+
+
+
+
+                        render();
 
 
                     }
@@ -145,6 +163,8 @@ angular.module("heatmap", []).directive("heatmap",
 
                     var cards = svg.selectAll(".square")
                         .data(scope.data);
+
+//                    console.log(scope.data[0])
 
                     cards.enter().append("rect")
                         .filter(function(d) { return d.value != null })
@@ -209,9 +229,104 @@ angular.module("heatmap", []).directive("heatmap",
                     render();
                 },true),400);
 
-                d3.select(window).on("resize", debounce(function() {
-                    render();
-                }, 500));
+//                scope.$watch("dimensions", debounce(function() {
+//                    console.log('false12')
+//                    render();
+//                },true),400);
+
+//                d3.select(window).on("resize", debounce(function() {
+//                    render();
+//                }, 500));
+
+
+                function change(d,i,j){
+                    for(var k=0;k< d.length;k++)
+                    {
+                        if(d[k].xIndex===i){
+                            d[k].xIndex=j;
+                        }else if(d[k].xIndex===j)
+                        {
+                            d[k].xIndex=i;
+                        }
+
+                        if(d[k].yIndex===i){
+                            d[k].yIndex=j;
+                        }else if(d[k].yIndex===j)
+                        {
+                            d[k].yIndex=i;
+                        }
+
+
+                    }
+
+
+
+                }
+
+                function changeLabelOrder(data,i,j)
+                {
+                    var iLabel = "";
+                    var jLabel = "";
+                    for(var k=0;k<data.length;k++)
+                    {
+                        if(data[k].xIndex===i) {
+                            iLabel = data[k].x;
+
+                        }
+                        console.log(iLabel);
+                    }
+                    for(var k=0;k<data.length;k++)
+                    {
+                        if(data[k].yIndex===j) {
+                            jLabel = data[k].y;
+
+                        }
+                        console.log(jLabel);
+
+                    }
+
+                    for(var k=0;k< data.length;k++)
+                    {
+                        if(data[k].xIndex===i){
+                            data[k].xIndex=j;
+                            data[k].x=jLabel;
+                        }else if(data[k].xIndex===j)
+                        {
+                            data[k].xIndex=i;
+                            data[k].x=iLabel;
+                        }
+
+                        if(data[k].yIndex===i){
+                            data[k].yIndex=j;
+                            data[k].y=jLabel;
+                        }else if(data[k].yIndex===j)
+                        {
+                            data[k].yIndex=i;
+                            data[k].y=iLabel;
+                        }
+
+
+                    }
+                    var n = Math.sqrt(data.length);
+                    for(var k=0;k<n;k++)
+                    {
+
+                        tmp = data[i+k*n].value;
+                        data[i+k*n].value=data[j+k*n].value;
+                        data[j+k*n].value=tmp;
+                    }
+                    for(var k=0;k<n;k++)
+                    {
+
+                        tmp = data[i*n+k].value;
+                        data[i*n+k].value=data[j*n+k].value;
+                        data[k+j*n].value=tmp;
+                    }
+
+//                   data.pop();
+
+
+                }
 
             }
         }

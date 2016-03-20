@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <script src="./d3.js"></script>
     <script src="./angular.js"></script>
-    <script src="heatmap.js"></script>
+
+    <script src="pearson.js"></script>
     <!--<script src="data.js"></script>-->
     <title></title>
     <style>
@@ -38,8 +39,9 @@
 <body ng-controller="democontroller">
     <script>
 
-     var data = [];
-        d3.csv("./flowers.csv",function(error,data1) {
+        var data = [];
+
+        d3.csv("./flowers.csv", function (error, data1) {
 
             var dimensions = [];
 
@@ -51,8 +53,10 @@
                     return d !== "species" && d !== 'id';
                 }));
             }
-            
-           var d = new Array();
+
+
+
+            var d = new Array();
             for(var i=0;i<dimensions.length;i++)
             {
                 d[i]=new Array();
@@ -65,23 +69,47 @@
                     var t = dimensions[ii];
                     d[ii].push(+data1[i][t]);
                 }
-
             }
-        
+
             n = dimensions.length;
             for (var i = 0; i < n; i++)
                 for (var j = 0; j < n; j++) {
                     data.push({'y': dimensions[j], 'x': dimensions[i], "value": calculate(d[i],d[j])})
                 }
 
-
-            
         });
+//        console.log(data);
 
+        function change(dimensions, i, j) {
+            var tmp = dimensions[i];
+            dimensions[i] = dimensions[j];
+            dimensions[j] = tmp;
+        }
+
+
+
+//sepal length,sepal width,petal length,petal width,species,id
+
+
+//        d3.text("flowers.csv", function(text) {
+//
+//
+//
+//              var data = d3.csv.parseRows(text).map(function(row) {
+//                return row.map(function(value) {
+//                    return +value;
+//                });
+//            });
+//            console
+//
+//        });
+
+
+//        })
     </script>
 
-    <heatmap class="chart" data="data" dispatch="dispatch" options="options"></heatmap>
-    <heatmap class="chart" data="data" dispatch="dispatch" options="options2"></heatmap>
+    <heatmap class="chart" data="data" ng-model = "dimensions" dispatch="dispatch" options="options" dimensions="dimensions"></heatmap>
+    <!--<heatmap class="chart" data="data" dispatch="dispatch" options="options2"></heatmap>-->
 
 
 </body>
@@ -102,9 +130,11 @@
 
         $scope.data = data;
 
+
         $scope.options = {
             margin: { top: 150, right: 0, bottom: 100, left: 120 },
             colors: ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]
+
         };
 
         $scope.options2 = {
@@ -113,9 +143,11 @@
                 ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"],
                 ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#a63603", "#7f2704"]
             ],
-            breaks: [4],
-            legend: false
+            breaks: [4]
+            ,legend: false
         };
+
+
 
         $scope.$watch("dispatch", function() {
             if ($scope.dispatch) {
@@ -123,7 +155,7 @@
                     console.log(e);
                 });
                 $scope.dispatch.on("mouseover", function(e) {
-                    return tooltip.text(e.y + ": " + e.x + " (" + e.value + ")").style("visibility", "visible");
+                    return tooltip.text(e.y + ": " + e.x + " (" + e.value.toFixed(2) + ")").style("visibility", "visible");
                 })
                 $scope.dispatch.on("mousemove", function(e) {
                     return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
@@ -134,9 +166,10 @@
             }
         }, true);
 
+
     });
 
 
 </script>
-
+<script src="heatmap.js"></script>
 </html>
