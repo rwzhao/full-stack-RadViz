@@ -51,14 +51,27 @@
                     return d !== "species" && d !== 'id';
                 }));
             }
+            
+           var d = new Array();
+            for(var i=0;i<dimensions.length;i++)
+            {
+                d[i]=new Array();
+            }
 
-
-            n = dimensions.length;
-            console.log(n);
-            for (var i = 0; i < n; i++)
-                for (var j = 0; j < n; j++) {
-                    data.push({'y': dimensions[j], 'x': dimensions[i], "value": Math.random()})
+            for(var i =0;i<data1.length;i++)
+            {
+                for(var ii=0;ii<dimensions.length;ii++)
+                {
+                    var t = dimensions[ii];
+                    d[ii].push(+data1[i][t]);
                 }
+
+            }
+        
+            
+
+
+            
         });
 
     </script>
