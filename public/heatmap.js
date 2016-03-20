@@ -73,6 +73,35 @@ angular.module("heatmap", []).directive("heatmap",
                         scope.data[d].xIndex = x.indexOf(scope.data[d].x);
                         scope.data[d].yIndex = y.indexOf(scope.data[d].y);
                     }
+                    
+                       var drag = d3.behavior.drag()
+                        .on('drag',dragText)
+                        .on('dragstart',dragStart)
+                        .on('dragend',dragEnd);
+
+                    function dragStart (){
+                        d3.select(this).attr('fill','red')
+                    }
+
+                    function dragText (d,i){
+                        console.log(i);
+                        var x=   d3.event.x;
+                        var y=  d3.event.y-yGridSize*i;
+
+//                        console.log("x:"+x+" y:"+y);
+                        d3.select(this)
+                            .attr('transform',function(d){
+//                                console.log(i);
+                                return "translate("+x+','+y+')';
+                            })
+                    }
+
+                    function dragEnd(){
+                            d3.select(this)
+                                .attr('fill','black')
+
+
+                    }
 
                     var xGridSize = Math.floor(width / x.length);
                     var yGridSize = Math.floor(height / y.length);
@@ -87,7 +116,8 @@ angular.module("heatmap", []).directive("heatmap",
                         .attr("y", function (d, i) { return i * yGridSize; })
                         .style("text-anchor", "end")
                         .attr("transform", "translate(-6," + yGridSize / 1.5 + ")")
-                        .attr("class", function (d, i) { return ("yLabel axis"); });
+                        .attr("class", function (d, i) { return ("yLabel axis"); })
+                        .call(drag);
 
                     var xLabels = svg.selectAll(".xLabel")
                         .data(x)
@@ -97,7 +127,8 @@ angular.module("heatmap", []).directive("heatmap",
                         .attr("x", 0)
                         .style("text-anchor", "start")
                         .attr("transform", "rotate(-90) translate(10, " + xGridSize / 2 + ")")
-                        .attr("class", function(d, i) { return ("xLabel axis"); });
+                        .attr("class", function(d, i) { return ("xLabel axis"); })
+                        .call(drag);
 
                     var colorScales = [];
                     if (options.breaks != null && options.breaks.length > 0) {
