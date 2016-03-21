@@ -27,10 +27,10 @@ angular.module("heatmap", []).directive("heatmap",
                 var options = {
                     legend: true,
                     margin: { top: 50, right: 0, bottom: 100, left: 50 },
-                    buckets: 9,
+                    buckets: 10,
                     colors: ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"],
                     duration: 1000,
-                    legendWidth: 0.3,
+                    legendWidth: 0.4,
                     breaks: null
                 };
 
@@ -42,6 +42,10 @@ angular.module("heatmap", []).directive("heatmap",
                 scope.dispatch = d3.dispatch("click", "mouseover", "mouseout", "mousemove");
 
                 var render = function() {
+
+                    var colorScales = d3.scale.linear()
+                        .domain([-1,0,1])
+                        .range(["#31a354","#ffffff","#e6550d"]);
 
                     var w = element[0].offsetWidth;
                     var h = element[0].offsetHeight;
@@ -99,7 +103,7 @@ angular.module("heatmap", []).directive("heatmap",
 //                        console.log("d3.event.y:"+d3.event.y);
 
                         var tmp = cal((y-yGridSize)/yGridSize);
-                        console.log(tmp+"  tmp");
+//                        console.log(tmp+"  tmp");
 
                         if(tmp+i>=Math.sqrt(data.length))
                         {
@@ -109,13 +113,9 @@ angular.module("heatmap", []).directive("heatmap",
                         }else{
                             theLabel=tmp+i;
                         }
-                        console.log(theLabel+" theLabel");
 
-
-//                        console.log("x:"+x+" y:"+y);
                         d3.select(this)
                             .attr('transform',function(d){
-//                                console.log(i);
                                 return "translate("+x+','+y+')';
                             })
                     }
@@ -124,20 +124,10 @@ angular.module("heatmap", []).directive("heatmap",
                         d3.select(this)
                             .attr('fill','black');
 
-//                        console.log(i);
-
-
-
-                        changeLabelOrder(data,theLabel,i);
-
-//                        data.push( {y: "sepal1 length", x: "sepal1 length", value: 1, xIndex: 4, yIndex: 4});
-
-
-
+                        if(theLabel!=i)
+                            changeLabelOrder(data,theLabel,i);
 
                         render();
-
-
                     }
 
                     var xGridSize = Math.floor(width / x.length);
@@ -167,18 +157,18 @@ angular.module("heatmap", []).directive("heatmap",
                         .attr("class", function(d, i) { return ("xLabel axis"); })
                         .call(drag);
 
-                    var colorScales = [];
-                    if (options.breaks != null && options.breaks.length > 0) {
-                        for (b in options.colors) {
-                            colorScales.push(d3.scale.quantile()
-                                .domain([0, options.buckets - 1, d3.max(scope.data, function(d) { return d.value; })])
-                                .range(options.colors[b]));
-                        }
-                    } else {
-                        colorScales.push(d3.scale.quantile()
-                            .domain([0, options.buckets - 1, d3.max(scope.data, function(d) { return d.value; })])
-                            .range(options.colors));
-                    }
+//                    var colorScales = [];
+//                    if (options.breaks != null && options.breaks.length > 0) {
+//                        for (b in options.colors) {
+//                            colorScales.push(d3.scale.quantile()
+//                                .domain([0, options.buckets - 1, d3.max(scope.data, function(d) { return d.value; })])
+//                                .range(options.colors[b]));
+//                        }
+//                    } else {
+//                        colorScales.push(d3.scale.quantile()
+//                            .domain([0, options.buckets - 1, d3.max(scope.data, function(d) { return d.value; })])
+//                            .range(options.colors));
+//                    }
 
                     var cards = svg.selectAll(".square")
                         .data(scope.data);
@@ -209,7 +199,7 @@ angular.module("heatmap", []).directive("heatmap",
                             }
                             return colorScales[options.breaks.length](d.value);
                         } else {
-                            return colorScales[0](d.value);
+                            return colorScales(d.value);
                         }
                     });
 
@@ -217,8 +207,14 @@ angular.module("heatmap", []).directive("heatmap",
 
                     if (options.legend) {
 
+                        var lenendData = [];
+                        for(var i=0;i<11;i++)
+                        {
+                            lenendData.push(i/5-1);
+                        }
+
                         var legend = svg.selectAll(".legend")
-                            .data([0].concat(colorScales[0].quantiles()).concat(d3.max(scope.data, function (d) { return d.value; })), function(d) { return d; });
+                            .data(lenendData)
 
                         legend.enter().append("g").attr("class", "legend");
 
@@ -227,12 +223,12 @@ angular.module("heatmap", []).directive("heatmap",
                             .attr("y", height * 1.05)
                             .attr("width", legendElementWidth)
                             .attr("height", legendElementHeight)
-                            .style("fill", function(d, i) { return options.colors[i]; })
+                            .style("fill", function(d, i) { return colorScales(lenendData[i]); })
                             .style("visibility", function(d, i) { return(i < options.buckets ? "visible" : "hidden") });
 
                         legend.append("text")
                             .attr("class", "legendLabel")
-                            .text(function(d,i) { return (0.1*i+0.1).toFixed(1); })
+                            .text(function(d,i) { if(i%2==0) return lenendData[i].toFixed(1); })
                             .attr("x", function(d, i) { return legendElementWidth * i; })
                             .attr("y", height * 1.15)
                             .style("text-anchor", "middle");
