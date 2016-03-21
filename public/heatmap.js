@@ -16,8 +16,8 @@ angular.module("heatmap", []).directive("heatmap",
             scope: {
                 data: "=",
                 options: "=?",
-                dispatch: "=?",
-                dimensions: "=?"
+                dispatch: "=?"
+
 
             },
             transclude: false,
@@ -91,6 +91,51 @@ angular.module("heatmap", []).directive("heatmap",
                         .on('dragstart',dragStart)
                         .on('dragend',dragEnd);
 
+                    var dragX = d3.behavior.drag()
+                        .on('drag',dragTextX)
+                        .on('dragstart',dragStartX)
+                        .on('dragend',dragEnd);
+
+                    function dragStartX () {
+                        d3.select(this).attr('fill', 'red').attr('font-weight', '900')
+                    }
+
+                    function dragTextX (d,i){
+//                        console.log(i);
+
+                        var y=   d3.event.x-i*xGridSize;
+                        var x=  -d3.event.y;
+                        console.log("d3.event.y:"+d3.event.y);
+                        console.log("d3.event.x:"+d3.event.x);
+                        console.log(xGridSize+"  == "+yGridSize);
+
+
+
+//                        var tmp=(d3.event.x-xGridSize/2)/xGridSize;
+                        var tmp = Math.ceil(d3.event.x/xGridSize)-1;
+//                        console.log(tmp+"  tmp")
+
+                        if(tmp<=0)
+                        {
+                            theLabel=0;
+                        }else if(tmp>=Math.sqrt(data.length))
+                        {
+                            theLabel=Math.sqrt(data.length)-1;
+                        }else
+                        {
+                            theLabel=tmp;
+                        }
+
+
+
+
+                        d3.select(this)
+                            .attr('transform',function(d){
+                                return "rotate(-90) translate("+x+','+y+')';
+                            })
+                    }
+
+
                     function dragStart (){
                         d3.select(this).attr('fill','red').attr('font-weight','900');
                     }
@@ -155,7 +200,7 @@ angular.module("heatmap", []).directive("heatmap",
                         .style("text-anchor", "start")
                         .attr("transform", "rotate(-90) translate(10, " + xGridSize / 2 + ")")
                         .attr("class", function(d, i) { return ("xLabel axis"); })
-                        .call(drag);
+                        .call(dragX);
 
 //                    var colorScales = [];
 //                    if (options.breaks != null && options.breaks.length > 0) {
@@ -243,10 +288,6 @@ angular.module("heatmap", []).directive("heatmap",
                     render();
                 },true),400);
 
-//                scope.$watch("dimensions", debounce(function() {
-//                    console.log('false12')
-//                    render();
-//                },true),400);
 
 //                d3.select(window).on("resize", debounce(function() {
 //                    render();
