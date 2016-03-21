@@ -39,10 +39,6 @@ angular.module("heatmap", []).directive("heatmap",
                 }
 
 
-
-
-
-
                 scope.dispatch = d3.dispatch("click", "mouseover", "mouseout", "mousemove");
 
                 var render = function() {
@@ -64,6 +60,8 @@ angular.module("heatmap", []).directive("heatmap",
                     var x = [];
                     var yu = {};
                     var y = [];
+
+                    var theLabel = 0;
 
 
 
@@ -90,13 +88,29 @@ angular.module("heatmap", []).directive("heatmap",
                         .on('dragend',dragEnd);
 
                     function dragStart (){
-                        d3.select(this).attr('fill','red')
+                        d3.select(this).attr('fill','red').attr('font-weight','900');
                     }
 
                     function dragText (d,i){
 //                        console.log(i);
+
                         var x=   d3.event.x;
                         var y=  d3.event.y-yGridSize*i;
+//                        console.log("d3.event.y:"+d3.event.y);
+
+                        var tmp = cal((y-yGridSize)/yGridSize);
+                        console.log(tmp+"  tmp");
+
+                        if(tmp+i>=Math.sqrt(data.length))
+                        {
+                            theLabel=Math.sqrt(data.length);
+                        }else if(tmp+i<=0){
+                            theLabel=0;
+                        }else{
+                            theLabel=tmp+i;
+                        }
+                        console.log(theLabel+" theLabel");
+
 
 //                        console.log("x:"+x+" y:"+y);
                         d3.select(this)
@@ -106,10 +120,15 @@ angular.module("heatmap", []).directive("heatmap",
                             })
                     }
 
-                    function dragEnd(){
+                    function dragEnd(d,i){
                         d3.select(this)
                             .attr('fill','black');
-                        changeLabelOrder(data,0,1);
+
+//                        console.log(i);
+
+
+
+                        changeLabelOrder(data,theLabel,i);
 
 //                        data.push( {y: "sepal1 length", x: "sepal1 length", value: 1, xIndex: 4, yIndex: 4});
 
@@ -225,7 +244,6 @@ angular.module("heatmap", []).directive("heatmap",
                 };
 
                 scope.$watch("data", debounce(function() {
-                    console.log('false11')
                     render();
                 },true),400);
 
@@ -238,30 +256,18 @@ angular.module("heatmap", []).directive("heatmap",
 //                    render();
 //                }, 500));
 
-
-                function change(d,i,j){
-                    for(var k=0;k< d.length;k++)
-                    {
-                        if(d[k].xIndex===i){
-                            d[k].xIndex=j;
-                        }else if(d[k].xIndex===j)
-                        {
-                            d[k].xIndex=i;
-                        }
-
-                        if(d[k].yIndex===i){
-                            d[k].yIndex=j;
-                        }else if(d[k].yIndex===j)
-                        {
-                            d[k].yIndex=i;
-                        }
-
-
+                function cal(x)
+                {
+                    if(x>0)
+                        return Math.ceil(x);
+                    else if (x==0) {
+                        return 0;
+                    }else{
+                        return Math.ceil(x);
                     }
-
-
-
                 }
+
+
 
                 function changeLabelOrder(data,i,j)
                 {
@@ -273,7 +279,7 @@ angular.module("heatmap", []).directive("heatmap",
                             iLabel = data[k].x;
 
                         }
-                        console.log(iLabel);
+//                        console.log(iLabel);
                     }
                     for(var k=0;k<data.length;k++)
                     {
@@ -281,7 +287,7 @@ angular.module("heatmap", []).directive("heatmap",
                             jLabel = data[k].y;
 
                         }
-                        console.log(jLabel);
+//                        console.log(jLabel);
 
                     }
 
@@ -304,8 +310,6 @@ angular.module("heatmap", []).directive("heatmap",
                             data[k].yIndex=i;
                             data[k].y=iLabel;
                         }
-
-
                     }
                     var n = Math.sqrt(data.length);
                     for(var k=0;k<n;k++)
