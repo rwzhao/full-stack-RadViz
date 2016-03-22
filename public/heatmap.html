@@ -34,9 +34,20 @@
             cursor: pointer;
         }
 
+        body {
+            width: 1440px;
+            margin: 15px auto 0;
+            background: #fff;
+        }
+
+        #RadViz{
+            float:left;margin-top:20px;margin-left:10;width:510px; height:510px;  border-width:1px; border-style:solid; border-color:#bfb7b0;
+        }
+
     </style>
 </head>
 <body ng-controller="democontroller">
+
     <script>
 
         var data = [];
@@ -78,7 +89,6 @@
                 for (var j = 0; j < n; j++) {
                     data.push({'y': dimensions[j], 'x': dimensions[i], "value": calculate(d[i],d[j])})
                 }
-
         });
 
         function change(dimensions, i, j) {
@@ -87,20 +97,22 @@
             dimensions[j] = tmp;
         }
 
-
-
-
     </script>
+
+
+
 
     <heatmap class="chart" data="data" dispatch="dispatch" options="options" ng-model="order"></heatmap>
     <!--<heatmap class="chart" data="data" dispatch="dispatch" options="options2"></heatmap>-->
+    <radviz ng-model="order"></radviz>
+
 
 
 </body>
 
 <script>
 
-    var app = angular.module('app',['heatmap']);
+    var app = angular.module('app',['heatmap','radviz']);
 
     var tooltip = d3.select("body")
             .append("div")
@@ -113,6 +125,8 @@
     app.controller("democontroller", function($scope) {
 
         $scope.data = data;
+
+        $scope.order = order;
 
 
         $scope.options = {
@@ -131,8 +145,6 @@
             ,legend: false
         };
 
-
-
         $scope.$watch("dispatch", function() {
             if ($scope.dispatch) {
                 $scope.dispatch.on("click", function(e) {
@@ -150,10 +162,17 @@
             }
         }, true);
 
+        $scope.$watch("order",function(){
+
+
+        },true);
+
 
     });
 
 
 </script>
 <script src="heatmap.js"></script>
+<script src="RadViz.js"></script>
+<script src="permutation.js"></script>
 </html>
