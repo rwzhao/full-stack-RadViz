@@ -40,6 +40,8 @@
     <script>
 
         var data = [];
+        var order = [1,2,3,4];
+
 
         d3.csv("./flowers.csv", function (error, data1) {
 
@@ -78,7 +80,6 @@
                 }
 
         });
-//        console.log(data);
 
         function change(dimensions, i, j) {
             var tmp = dimensions[i];
@@ -88,27 +89,10 @@
 
 
 
-//sepal length,sepal width,petal length,petal width,species,id
 
-
-//        d3.text("flowers.csv", function(text) {
-//
-//
-//
-//              var data = d3.csv.parseRows(text).map(function(row) {
-//                return row.map(function(value) {
-//                    return +value;
-//                });
-//            });
-//            console
-//
-//        });
-
-
-//        })
     </script>
 
-    <heatmap class="chart" data="data" ng-model = "dimensions" dispatch="dispatch" options="options" dimensions="dimensions"></heatmap>
+    <heatmap class="chart" data="data" dispatch="dispatch" options="options" ng-model="order"></heatmap>
     <!--<heatmap class="chart" data="data" dispatch="dispatch" options="options2"></heatmap>-->
 
 

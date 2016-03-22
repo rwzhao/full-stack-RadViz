@@ -16,9 +16,8 @@ angular.module("heatmap", []).directive("heatmap",
             scope: {
                 data: "=",
                 options: "=?",
-                dispatch: "=?"
-
-
+                dispatch: "=?",
+                dimOrder:"=?"
             },
             transclude: false,
             template: "<div></div>",
@@ -37,6 +36,9 @@ angular.module("heatmap", []).directive("heatmap",
                 if (scope.options) {
                     options = angular.extend(options, scope.options);
                 }
+
+
+
 
 
                 scope.dispatch = d3.dispatch("click", "mouseover", "mouseout", "mousemove");
@@ -105,11 +107,9 @@ angular.module("heatmap", []).directive("heatmap",
 
                         var y=   d3.event.x-i*xGridSize;
                         var x=  -d3.event.y;
-                        console.log("d3.event.y:"+d3.event.y);
-                        console.log("d3.event.x:"+d3.event.x);
-                        console.log(xGridSize+"  == "+yGridSize);
-
-
+//                        console.log("d3.event.y:"+d3.event.y);
+//                        console.log("d3.event.x:"+d3.event.x);
+//                        console.log(xGridSize+"  == "+yGridSize);
 
 //                        var tmp=(d3.event.x-xGridSize/2)/xGridSize;
                         var tmp = Math.ceil(d3.event.x/xGridSize)-1;
@@ -125,9 +125,6 @@ angular.module("heatmap", []).directive("heatmap",
                         {
                             theLabel=tmp;
                         }
-
-
-
 
                         d3.select(this)
                             .attr('transform',function(d){
@@ -169,8 +166,13 @@ angular.module("heatmap", []).directive("heatmap",
                         d3.select(this)
                             .attr('fill','black');
 
+
+
+
                         if(theLabel!=i)
                             changeLabelOrder(data,theLabel,i);
+
+                        console.log(order);
 
                         render();
                     }
@@ -288,6 +290,13 @@ angular.module("heatmap", []).directive("heatmap",
                     render();
                 },true),400);
 
+                scope.$watch("order", debounce(function() {
+                    render();
+
+                },true),400);
+
+
+
 
 //                d3.select(window).on("resize", debounce(function() {
 //                    render();
@@ -308,6 +317,11 @@ angular.module("heatmap", []).directive("heatmap",
 
                 function changeLabelOrder(data,i,j)
                 {
+                    var tmpLabel = order[i];
+                    order[i]=order[j];
+                    order[j]=tmpLabel;
+                    console.log(order);
+
                     var iLabel = "";
                     var jLabel = "";
                     for(var k=0;k<data.length;k++)
