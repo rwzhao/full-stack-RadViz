@@ -57,7 +57,7 @@ angular.module("heatmap", []).directive("heatmap",
                     d3.select(element[0]).select("svg").remove();
 
                     var svg = d3.select(element[0]).append("svg")
-                        .attr("width", width + options.margin.left + options.margin.right)
+                        .attr("width", width*2 + options.margin.left + options.margin.right)
                         .attr("height", height + options.margin.top + options.margin.bottom)
                         .append("g")
                         .attr('class','heat')
@@ -468,7 +468,7 @@ angular.module("heatmap", []).directive("heatmap",
                                 .append('g')
                                 .attr('class','rad')
                                 .attr("width", 600).attr("height", 500)
-                                .attr("transform", "translate(" + 50 + "," + 50 + ")");
+                                .attr("transform", "translate(" + 800 + "," + 50 + ")");
 
                             var dimdata = [];
                             for (var i = 0; i < DimNum; i++) {
