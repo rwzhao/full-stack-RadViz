@@ -562,6 +562,14 @@ angular.module("heatmap", []).directive("heatmap",
                                     return "point" + d[3] + "-class:" + d[2];
                                 });
 
+                                                            var dunnsindex = (dunnsIndex(3,NodePoint));
+
+                            svg.append('text')
+                                .text('Dunns Index: '+dunnsindex.toFixed(3))
+                                .attr('x',width)
+                                .attr('y',height)
+                                .attr('dx',-250)
+
                         });//.data
 
                         function getSumUpX(RecordData, Radius, orderNum) {
