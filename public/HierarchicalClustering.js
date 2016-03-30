@@ -14,7 +14,7 @@ data[3]=[0.82,-0.37,0.96,1];
 
 function Hcluster(data)
 {
-//	console.log(data.length);
+//  console.log(data.length);
     var len = data.length;
     var myMap = d3.map();
 
@@ -43,13 +43,31 @@ function Hcluster(data)
         var key = myMap.keys();
         for(var i =0;i<key.length;i++) {
             for (var j = 0; j < key.length; j++) {
-                if (i == j) continue;
-                if (tmpMax < data[i][j]) {
-                    tmpMax = data[i][j];
-                    tmpx = i;
-                    tmpy = j;
+                if (i==j) continue;
+
+                var tmp1=[];
+                    tmp1=myMap.get(key[i]);
+                var tmp2=[];
+                    tmp2 =myMap.get(key[j]);
+                var dis = calculateDis(tmp1,tmp2);
+//                console.log(dis);
+                if(dis>tmpMax)
+                {
+                    console.log(dis);
+                    tmpMax=dis;
+                    tmpx=key[i];
+                    tmpy=key[j];
                 }
+
             }
+        }
+
+        console.log(tmpy+" "+tmpx);
+        if((myMap.get(tmpy)).length>((myMap.get(tmpx)).length))
+        {
+            var tmp = tmpy;
+            tmpy=tmpx;
+            tmpx=tmp;
         }
 
         var tmpArr = [];
@@ -58,6 +76,22 @@ function Hcluster(data)
         myMap.set(tmpx,tmpArr);
         myMap.remove(tmpy);
 
+    }
+
+    function calculateDis(tmp1,tmp2)
+    {
+        var len1= tmp1.length;
+        var len2= tmp2.length;
+        var dis =0;
+
+        for(var i=0;i<len1;i++)
+        {
+            for(var j =0;j<len2;j++)
+            {
+                dis+=data[tmp1[i]][tmp2[j]];
+            }
+        }
+        return dis/(len1*len2);
     }
 
 }
