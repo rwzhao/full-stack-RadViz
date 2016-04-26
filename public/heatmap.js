@@ -38,9 +38,6 @@ angular.module("heatmap", []).directive("heatmap",
                 }
 
 
-
-
-
                 scope.dispatch = d3.dispatch("click", "mouseover", "mouseout", "mousemove");
 
                 var render = function() {
@@ -419,17 +416,75 @@ angular.module("heatmap", []).directive("heatmap",
                             DimPoint[i][2] = ordertxt[i];
                         }
 //compute Data Point
-                        d3.csv("iris-normalization.csv", function (RecordData) {
+                        d3.csv("./flowers.csv", function (error, RecordData) {
+
+                            var dimensions = [];
+
+
+                            var n;
+                            if (error) {
+                                throw error;
+                            } else {
+                                dimensions = (d3.keys(RecordData[0]).filter(function (d) {
+                                    return d !== "species" && d !== 'id';
+                                }));
+                            }
+
+//                            console.log(RecordData);
+                            var d = new Array(); // variable array
+                            var dd = new Array();
+                            for(var i=0;i<dimensions.length;i++)
+                            {
+                                d[i]=new Array();
+                            }
+
+                            for(var i=0;i<RecordData.length;i++)
+                            {
+                                dd[i]=new Array();
+                            }
+
+
+                            for(var i =0;i<RecordData.length;i++)
+                            {
+                                for(var ii=0;ii<dimensions.length;ii++)
+                                {
+                                    var t = dimensions[ii];
+                                    d[ii].push(+RecordData[i][t]);
+
+                                }
+                            }
+
+
+                            n = dimensions.length;
+                            for(var i=0;i<n;i++)
+                            {
+                                var tmpMin = d3.min(d[i]);
+                                var tmpMax = d3.max(d[i]);
+                                for(var j=0;j<d[0].length;j++) {
+                                    d[i][j] = ((d[i][j] - tmpMin) / (tmpMax - tmpMin)).toFixed(2);
+                                }
+                            }
+
+                            for(var i=0;i<RecordData.length;i++)
+                                for(var j=0;j<dimensions.length;j++)
+                                {
+                                    dd[i][j]=+d[j][i];
+//                                    console.log(dd[i][j]+" i:"+i+" j:"+j);
+                                }
+
+
+
                             for (var i = 0; i < RecordData.length; i++) {
                                 NodePoint[i] = new Array();
                             }
                             for (var i = 0; i < RecordData.length; i++) {
-                                var tt = RecordData[i].dimData;
-                                var t1 = tt.split(",");
-                                for (var j = 0; j < t1.length; j++) {
-                                    t1[j] = parseFloat(t1[j]);
-                                }
-                                RecordData[i].dimData = t1;
+//                                var tt = RecordData[i].dimData;
+//                                var t1 = tt.split(",");
+//                                for (var j = 0; j < t1.length; j++) {
+//                                    t1[j] = parseFloat(t1[j]);
+//                                }
+
+                                RecordData[i].dimData = dd[i];
 
                             }
                             var RecordData1 = RecordData.slice();
@@ -440,11 +495,9 @@ angular.module("heatmap", []).directive("heatmap",
                                 for (var k = 1; k <= ordertxt.length; k++) {
                                     t2[k - 1] = t1[ordertxt[k - 1] - 1];
                                 }
-//        console.log(t2)
-//        console.log(t1+" ---")
+
                                 RecordData1[i].dimData = t2;
                             }
-
 
                             var dataStr = "";
                             for (var i = 0; i < RecordData.length; i++) {
@@ -455,10 +508,10 @@ angular.module("heatmap", []).directive("heatmap",
                                 var CoordY = SumUpY / SumDown;
                                 NodePoint[i][0] = CoordX + centerX;
                                 NodePoint[i][1] = CoordY + centerY;
-                                NodePoint[i][2] = RecordData[i].classId;
+                                NodePoint[i][2] = RecordData[i].species;
                                 NodePoint[i][3] = RecordData[i].id;
                                 dataStr = dataStr + NodePoint[i][3] + "," + NodePoint[i][0] + "," + NodePoint[i][1] + "," + NodePoint[i][2] + "\n";
-
+//                                console.log(dataStr);
                             }
 
                             d3.select(element[0]).select('svg .rad').remove();
@@ -493,9 +546,10 @@ angular.module("heatmap", []).directive("heatmap",
                             arcs.append("path")
                                 //.style("stroke","red")
                                 //.style("stroke-opacity",0)
-                                //  .style("stroke-width",0)
+                                //	.style("stroke-width",0)
                                 .attr("fill", function (d, i) {
-                                    var color1 = ["#006650", "#f5ab00", "#db4527", "#005687"];
+                                    var color1 = ["#006650", "#f5ab00", "#db4527", "#005687","#C0FF3E","#B452CD","#8B1A1A","#87CEFA","#7CFC00","#00F5FF","#FFFF00","#FF3E96","#CD9B1D","#CCCCCC","#9400D3","#7AC5CD"];
+
                                     return color1[i];
                                 })
                                 .attr("d", arc);
@@ -562,13 +616,14 @@ angular.module("heatmap", []).directive("heatmap",
                                     return "point" + d[3] + "-class:" + d[2];
                                 });
 
-                                                            var dunnsindex = (dunnsIndex(3,NodePoint));
+                            var dunnsindex = (dunnsIndex(3,NodePoint));
 
                             svg.append('text')
                                 .text('Dunns Index: '+dunnsindex.toFixed(3))
-                                .attr('x',width)
-                                .attr('y',height)
-                                .attr('dx',-250)
+//                                .attr('x',width)
+//                                .attr('y',height)
+                                .attr('dx',50)
+
 
                         });//.data
 
