@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <script src="./d3.js"></script>
     <script src="./angular.js"></script>
-
     <script src="pearson.js"></script>
     <!--<script src="data.js"></script>-->
     <title></title>
@@ -51,8 +50,8 @@
     <script>
 
         var data = [];
-        var order = [1,2,3,4];
-
+//        var order = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+        var order=[];
 
         d3.csv("./flowers.csv", function (error, data1) {
 
@@ -67,13 +66,23 @@
                 }));
             }
 
-
-
             var d = new Array();
             for(var i=0;i<dimensions.length;i++)
             {
                 d[i]=new Array();
             }
+
+            for(var i=0;i<dimensions.length;i++)
+                order[i]=i+1;
+
+            order = [13,2,1,4,6,5,7,9,8,11,12,10,3];
+            var tmpDim = dimensions.slice();
+            for(var i=0;i<order.length;i++)
+            {
+                dimensions[i]=tmpDim[order[i]-1];
+            }
+
+
 
             for(var i =0;i<data1.length;i++)
             {
@@ -84,11 +93,23 @@
                 }
             }
 
+
             n = dimensions.length;
             for (var i = 0; i < n; i++)
                 for (var j = 0; j < n; j++) {
                     data.push({'y': dimensions[j], 'x': dimensions[i], "value": calculate(d[i],d[j])})
+//                    console.log(data);
                 }
+
+            n = dimensions.length;
+            for(var i=0;i<n;i++)
+            {
+                var tmpMin = d3.min(d[i]);
+                var tmpMax = d3.max(d[i]);
+                for(var j=0;j<d[0].length;j++) {
+                    d[i][j] = ((d[i][j] - tmpMin) / (tmpMax - tmpMin)).toFixed(2);
+                }
+            }
         });
 
         function change(dimensions, i, j) {
@@ -98,7 +119,6 @@
         }
 
     </script>
-
 
 
 
@@ -173,6 +193,7 @@
 
 
 </script>
+<script src="hcluster.min.js"></script>
 <script src="heatmap.js"></script>
 <script src="RadViz.js"></script>
 <script src="permutation.js"></script>
