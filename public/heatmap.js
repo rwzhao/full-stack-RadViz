@@ -460,8 +460,9 @@ angular.module("heatmap", []).directive("heatmap",
                             {
                                 var tmpMin = d3.min(d[i]);
                                 var tmpMax = d3.max(d[i]);
+//                                console.log(tmpMax+" tmpMax "+tmpMin+" tmpMin");
                                 for(var j=0;j<d[0].length;j++) {
-                                    d[i][j] = ((d[i][j] - tmpMin) / (tmpMax - tmpMin)).toFixed(2);
+                                    d[i][j] = ((d[i][j] - tmpMin) / (tmpMax - tmpMin)).toFixed(3);
                                 }
                             }
 
@@ -485,6 +486,7 @@ angular.module("heatmap", []).directive("heatmap",
 //                                }
 
                                 RecordData[i].dimData = dd[i];
+//                                console.log(dd[i]+" :"+i);
 
                             }
                             var RecordData1 = RecordData.slice();
@@ -499,6 +501,8 @@ angular.module("heatmap", []).directive("heatmap",
                                 RecordData1[i].dimData = t2;
                             }
 
+                            var classCount = 0;
+                            var classes=[];
                             var dataStr = "";
                             for (var i = 0; i < RecordData.length; i++) {
                                 var SumDown = getSumDown(RecordData[i].dimData, orderNum);
@@ -509,6 +513,24 @@ angular.module("heatmap", []).directive("heatmap",
                                 NodePoint[i][0] = CoordX + centerX;
                                 NodePoint[i][1] = CoordY + centerY;
                                 NodePoint[i][2] = RecordData[i].species;
+                                if(classCount==0)
+                                {
+                                    classes[classCount++]=NodePoint[i][2];
+                                }else{
+                                    var flag=0;
+                                    for(var kk=0;kk<classCount;kk++)
+                                    {
+                                        if(classes[kk]==NodePoint[i][2]) {
+                                            flag=1;
+                                            break;}
+
+                                    }
+                                    if(flag==0){
+                                        classes[classCount++]=NodePoint[i][2];
+                                    }
+                                }
+//                                console.log(classCount);
+
                                 NodePoint[i][3] = RecordData[i].id;
                                 dataStr = dataStr + NodePoint[i][3] + "," + NodePoint[i][0] + "," + NodePoint[i][1] + "," + NodePoint[i][2] + "\n";
 //                                console.log(dataStr);
@@ -616,7 +638,9 @@ angular.module("heatmap", []).directive("heatmap",
                                     return "point" + d[3] + "-class:" + d[2];
                                 });
 
-                            var dunnsindex = (dunnsIndex(3,NodePoint));
+
+
+                            var dunnsindex = (dunnsIndex(classCount,NodePoint));
 
                             svg.append('text')
                                 .text('Dunns Index: '+dunnsindex.toFixed(3))
