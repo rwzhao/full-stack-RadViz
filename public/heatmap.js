@@ -264,11 +264,22 @@ angular.module("heatmap", []).directive("heatmap",
 
                         function ondrag(d){
                             d3.select(this)
-                                .attr('x',d3.event.x)
+                                .attr('x',function(){
+                                    if(d3.event.x<0)
+                                        return 0;
+                                    if(d3.event.x>10*legendElementWidth)
+                                        return 9.75*legendElementWidth;
+                                    return d3.event.x})
                                 .attr('y',height*1.05-legendElementHeight/2)
                                 .attr("width", legendElementWidth/4)
                                 .attr("height", legendElementHeight/2)
                                 .style("fill", function(d, i) { return colorScales(lenendData[(d3.event.x)/legendElementWidth]); })
+
+                            d3.selectAll('.square').classed('hiddenCards',function(d){
+                                if(d.value<(d3.event.x-5*legendElementWidth)/(5*legendElementWidth))
+                                    return true;
+                                return false;
+                            });
                         }
 
                         var dragMin = d3.behavior.drag()
@@ -279,8 +290,7 @@ angular.module("heatmap", []).directive("heatmap",
                                 d3.select('.rectMin').remove()
                             })
 
-                        var dragMax = d3.behavior.drag()
-                            .on('drag',ondrag);
+
                         
                         legend.append('rect')
                             .attr('class','rectMin')
@@ -298,7 +308,6 @@ angular.module("heatmap", []).directive("heatmap",
                             .attr("width", legendElementWidth/2)
                             .attr("height", legendElementHeight/2)
                             .style("fill", function(d, i) { return colorScales(lenendData[9]); })
-                            .call(dragMax)
 
                         legend.append("rect")
                             .attr("x", function(d, i) { return legendElementWidth * i; })

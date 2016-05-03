@@ -33,6 +33,10 @@
             cursor: pointer;
         }
 
+        .hiddenCards {
+            fill: #fff !important;
+        }
+
         body {
             width: 1440px;
             margin: 15px auto 0;
@@ -75,7 +79,8 @@
             for(var i=0;i<dimensions.length;i++)
                 order[i]=i+1;
 
-            order = [13,2,1,4,6,5,7,9,8,11,12,10,3];
+//            order = [13,2,1,4,6,5,7,9,8,11,12,10,3];
+            order = [1,2,3,4,5,6,7,8,9,10,11,12,13];
             var tmpDim = dimensions.slice();
             for(var i=0;i<order.length;i++)
             {
@@ -98,7 +103,6 @@
             for (var i = 0; i < n; i++)
                 for (var j = 0; j < n; j++) {
                     data.push({'y': dimensions[j], 'x': dimensions[i], "value": calculate(d[i],d[j])})
-//                    console.log(data);
                 }
 
             n = dimensions.length;
@@ -120,13 +124,7 @@
 
     </script>
 
-
-
     <heatmap class="chart" data="data" dispatch="dispatch" options="options" ng-model="order"></heatmap>
-    <!--<heatmap class="chart" data="data" dispatch="dispatch" options="options2"></heatmap>-->
-    <!--<radviz ng-model="order"></radviz>-->
-
-
 
 </body>
 
@@ -183,7 +181,6 @@
         }, true);
 
         $scope.$watch("order",function(){
-
 
 
         },true);
