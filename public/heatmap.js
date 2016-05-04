@@ -276,7 +276,7 @@ angular.module("heatmap", []).directive("heatmap",
                                 .style("fill", function(d, i) { return colorScales(lenendData[(d3.event.x)/legendElementWidth]); })
 
                             d3.selectAll('.square').classed('hiddenCards',function(d){
-                                if(d.value<(d3.event.x-5*legendElementWidth)/(5*legendElementWidth))
+                                if(d.value<(d3.event.x-5*legendElementWidth)/(5.0*legendElementWidth))
                                     return true;
                                 return false;
                             });
@@ -289,14 +289,12 @@ angular.module("heatmap", []).directive("heatmap",
                             .on('dragend',function () {
                                 d3.select('.rectMin').remove()
                             })
-
-
                         
                         legend.append('rect')
                             .attr('class','rectMin')
-                            .attr('x',-legendElementWidth/2)
+                            .attr('x',-legendElementWidth/4)
                             .attr('y',height*1.05-legendElementHeight/2)
-                            .attr("width", legendElementWidth/2)
+                            .attr("width", legendElementWidth/4)
                             .attr("height", legendElementHeight/2)
                             .style("fill", function(d, i) { return colorScales(lenendData[0]); })
                             .call(dragMin)
@@ -305,7 +303,7 @@ angular.module("heatmap", []).directive("heatmap",
                         legend.append('rect')
                             .attr('x',20*legendElementWidth/2)
                             .attr('y',height*1.05-legendElementHeight/2)
-                            .attr("width", legendElementWidth/2)
+                            .attr("width", legendElementWidth/4)
                             .attr("height", legendElementHeight/2)
                             .style("fill", function(d, i) { return colorScales(lenendData[9]); })
 
